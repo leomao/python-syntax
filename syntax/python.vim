@@ -109,17 +109,23 @@ syn match   pythonDecorator	"^\s*\zs@" display nextgroup=pythonFunction skipwhit
 " A dot must be allowed because of @MyClass.myfunc decorators.
 
 " Bracket symbols
-syn match pythonBrackets "[(|)]" contained skipwhite
+syn match pythonParens   "[()]" display skipwhite
+syn match pythonBrackets "[][]" display skipwhite
+syn match pythonBraces   "[{}]" display skipwhite
+
+" Comma
+syn match pythonComma    "[,]"  display skipwhite
+syn match pythonColon    "[:]"  display skipwhite
 
 " Class parameters
 syn match  pythonClass "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonClassVars
-syn region pythonClassVars start="(" end=")" contained contains=pythonClassParameters transparent keepend
-syn match  pythonClassParameters "[^,]*" contained contains=pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonBrackets skipwhite
+syn region pythonClassVars start="(" end=")" matchgroup=pythonParens contained contains=pythonClassParameters,pythonComma transparent keepend
+syn match  pythonClassParameters "[^,]*" contained contains=pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonParens,pythonComma skipwhite
 
 " Function parameters
 syn match  pythonFunction "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonFunctionVars
-syn region pythonFunctionVars start="(" end=")" contained contains=pythonFunctionParameters transparent keepend
-syn match  pythonFunctionParameters "[^,]*" contained contains=pythonSelf,pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonBrackets skipwhite
+syn region pythonFunctionVars start="(" end=")" matchgroup=pythonParens contained contains=pythonFunctionParameters transparent keepend
+syn match  pythonFunctionParameters "[^,]*" contained contains=pythonSelf,pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonParens,pythonComma,pythonColon skipwhite
 
 syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
 syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
@@ -349,7 +355,7 @@ if version >= 508 || !exists("did_python_syn_inits")
     HiLink pythonExtraPseudoOperator Operator
   endif
   if !exists("python_no_parameter_highlight")
-    HiLink pythonBrackets           Normal
+    HiLink pythonParens             Normal
     HiLink pythonClassParameters    Constant
     HiLink pythonFunctionParameters Constant
   endif
