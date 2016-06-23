@@ -147,29 +147,12 @@ syn match   pythonEscape	"\\N{\a\+\%(\s\a\+\)*}" contained
 syn match   pythonEscape	"\\$"
 
 if exists("python_highlight_all")
-  if exists("python_no_builtin_highlight")
-    unlet python_no_builtin_highlight
+  if !exists("python_self_cls_highlight")
+    let python_self_cls_highlight = 1
   endif
-  if exists("python_no_doctest_code_highlight")
-    unlet python_no_doctest_code_highlight
+  if !exists("python_space_error_highlight")
+    let python_space_error_highlight = 1
   endif
-  if exists("python_no_doctest_highlight")
-    unlet python_no_doctest_highlight
-  endif
-  if exists("python_no_exception_highlight")
-    unlet python_no_exception_highlight
-  endif
-  if exists("python_no_number_highlight")
-    unlet python_no_number_highlight
-  endif
-  if exists("python_no_parameter_highlight")
-    unlet python_no_parameter_highlight
-  endif
-  if exists("python_no_operator_highlight")
-    unlet python_no_operator_highlight
-  endif
-  let python_self_cls_highlight = 1
-  let python_space_error_highlight = 1
 endif
 
 " It is very important to understand all details before changing the
