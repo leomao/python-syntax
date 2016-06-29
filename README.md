@@ -13,30 +13,29 @@ Changes from the original `python.vim` are:
 * [ON]  Highlight class, function parameters
 * [ON]  Highlight standard operators: `~,!,^,&,|,*,/,%,+,-`
 * [ON]  Highlight pseudo operators: `-=,//=,*=,&=,%=,+=,!=`
+* [ON]  Highlight parens, brackets, braces: `(), [], {}`
 * 3 extras options:
-
-    * `let python_self_cls_highlight = 1`
-    * `let python_no_operator_highlight = 1`
-    * `let python_no_parameter_highlight = 1`
-
+  * `let python_self_cls_highlight = 1`
+  * `let python_no_operator_highlight = 1`
+  * `let python_no_parameter_highlight = 1`
 * All the options can be switched on together (recommended).
-
-    * `let python_highlight_all = 1`
+  * `let python_highlight_all = 1`
 
 ## Color Scheme
 
 * Vim keywords:
-
-    * `pythonRepeat` `pythonConditional` `pythonInclude` `pythonTodo` `pythonComment` `pythonStatement`
-    * `pythonEscape` `pythonSpaceError` `pythonException` `pythonExceptions` `pythonDoctest` `pythonDoctestValue`
-    * `pythonNumber` `pythonString` `pythonRawString` `pythonBuiltin` `pythonFunction` `pythonClass` `pythonDecorator`
-    * `pythonSelf` `pythonConstant` `pythonBrackets` `pythonOperator` `pythonExtraOperator` `pythonExtraPseudoOperator` `pythonClassParameters` `pythonFunctionParameters`
+  * `pythonRepeat` `pythonConditional` `pythonInclude` `pythonTodo` `pythonComment` `pythonStatement`
+  * `pythonEscape` `pythonSpaceError` `pythonException` `pythonExceptions` `pythonDoctest` `pythonDoctestValue`
+  * `pythonNumber` `pythonString` `pythonRawString` `pythonBuiltin` `pythonFunction` `pythonClass` `pythonDecorator`
+  * `pythonSelf` `pythonConstant` `pythonParens` `pythonBrackets` `pythonBraces` `pythonOperator` `pythonExtraOperator` `pythonExtraPseudoOperator`
 
 ## How to install
 
-The easiest installation method is to place `syntax/python.vim` script into your `~/.vim/syntax/` directory.
-You can also use `Pathogen` or `Vundle` plugin managers in which case you can install the whole `kh3phr3n/python-syntax`
-repository into the corresponding plugins directory.
+The easiest installation method is to place `syntax/python.vim` script into
+your `~/.vim/syntax/` directory.
+You can also use `vim-plug`, `Pathogen` or `Vundle` plugin managers in which
+case you can install the whole `leomao/python-syntax` repository into the
+corresponding plugins directory.
 
 ## Informations
 
