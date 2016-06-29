@@ -117,15 +117,11 @@ syn match pythonBraces   "[{}]" display skipwhite
 syn match pythonComma    "[,]"  display skipwhite
 syn match pythonColon    "[:]"  display skipwhite
 
-" Class parameters
-syn match  pythonClass "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonClassVars
-syn region pythonClassVars start="(" end=")" matchgroup=pythonParens contained contains=pythonClassParameters,pythonComma transparent keepend
-syn match  pythonClassParameters "[^,]*" contained contains=pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonParens,pythonComma skipwhite
+" Class declaration
+syn match  pythonClass "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 
-" Function parameters
-syn match  pythonFunction "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained nextgroup=pythonFunctionVars
-syn region pythonFunctionVars start="(" end=")" matchgroup=pythonParens contained contains=pythonFunctionParameters transparent keepend
-syn match  pythonFunctionParameters "[^,]*" contained contains=pythonSelf,pythonExtraOperator,pythonBuiltin,pythonConstant,pythonStatement,pythonNumber,pythonString,pythonParens,pythonComma,pythonColon skipwhite
+" Function declaration
+syn match  pythonFunction "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 
 syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
 syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
