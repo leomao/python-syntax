@@ -80,7 +80,6 @@ set cpo&vim
 syn keyword pythonStatement	class nextgroup=pythonClass skipwhite
 syn keyword pythonStatement	def nextgroup=pythonFunction skipwhite
 
-syn keyword pythonStatement	False, None, True
 syn keyword pythonStatement	as assert break continue del exec global
 syn keyword pythonStatement	lambda nonlocal pass print return with
 syn keyword pythonConditional	elif else if
@@ -109,29 +108,43 @@ syn match   pythonDecorator	"^\s*\zs@" display nextgroup=pythonFunction skipwhit
 " A dot must be allowed because of @MyClass.myfunc decorators.
 
 " Bracket symbols
-syn match pythonParens   "[()]" display skipwhite
-syn match pythonBrackets "[][]" display skipwhite
-syn match pythonBraces   "[{}]" display skipwhite
+syn match pythonParens   "[()]" display
+syn match pythonBrackets "[][]" display
+syn match pythonBraces   "[{}]" display
 
 " Comma
-syn match pythonComma    "[,]"  display skipwhite
-syn match pythonColon    "[:]"  display skipwhite
+syn match pythonComma    "[,]"  display
+syn match pythonColon    "[:]"  display
 
 " Class declaration
-syn match  pythonClass "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
+syn match  pythonClass "\%(\%(class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 
 " Function declaration
-syn match  pythonFunction "\%(\%(def\s\|class\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
+syn match  pythonFunction "\%(\%(def\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 
 syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
 syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
 
+syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonNumber,pythonNumberError,pythonString,pythonParens,pythonBrackets,pythonOperator,pythonExtraOperator,pythonBuiltinObj,pythonBuiltinFunc
+
 " Triple-quoted strings can contain doctests.
+syn region  pythonBytes matchgroup=pythonQuotes
+      \ start=+[bB]\=\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
+      \ contains=pythonEscape,@Spell
+syn region  pythonBytes matchgroup=pythonTripleQuotes
+      \ start=+[bB]\=\z('''\|"""\)+ end="\z1" keepend
+      \ contains=pythonEscape,pythonSpaceError,pythonDoctest,@Spell
 syn region  pythonString matchgroup=pythonQuotes
       \ start=+[uU]\=\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
       \ contains=pythonEscape,@Spell
 syn region  pythonString matchgroup=pythonTripleQuotes
       \ start=+[uU]\=\z('''\|"""\)+ end="\z1" keepend
+      \ contains=pythonEscape,pythonSpaceError,pythonDoctest,@Spell
+syn region  pythonFormatString matchgroup=pythonQuotes
+      \ start=+[uU]\=[fF]\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
+      \ contains=pythonEscape,@Spell
+syn region  pythonFormatString matchgroup=pythonTripleQuotes
+      \ start=+[uU]\=[fF]\z('''\|"""\)+ end="\z1" keepend
       \ contains=pythonEscape,pythonSpaceError,pythonDoctest,@Spell
 syn region  pythonRawString matchgroup=pythonQuotes
       \ start=+[uU]\=[rR]\z(['"]\)+ end="\z1" skip="\\\\\|\\\z1"
@@ -157,6 +170,11 @@ if exists("python_highlight_all")
   endif
 endif
 
+syn match pythonStringFormat "{{\|}}" contained containedin=pythonString,pythonRawString,pythonFormatString
+syn match pythonStringFormat "{\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)\=\%(\.\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\[\%(\d\+\|[^!:\}]\+\)\]\)*\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}]\=[<>=^]\)\=[ +-]\=#\=0\=\d*,\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}" contained containedin=pythonString,pythonRawString
+syn region pythonStrInterpRegion start="{"he=e+1,rs=e+1 end="\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}]\=[<>=^]\)\=[ +-]\=#\=0\=\d*,\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}"hs=s-1,re=s-1 extend contained containedin=pythonFormatString contains=pythonStrInterpRegion,@pythonExpression
+
+
 " It is very important to understand all details before changing the
 " regular expressions below or their order.
 " The word boundaries are *not* the floating-point number boundaries
@@ -174,16 +192,28 @@ endif
 " https://docs.python.org/3/reference/lexical_analysis.html#numeric-literals
 if !exists("python_no_number_highlight")
   " numbers (including longs and complex)
-  syn match   pythonNumber	"\<0[oO]\=\o\+[Ll]\=\>"
-  syn match   pythonNumber	"\<0[xX]\x\+[Ll]\=\>"
-  syn match   pythonNumber	"\<0[bB][01]\+[Ll]\=\>"
-  syn match   pythonNumber	"\<\%([1-9]\d*\|0\)[Ll]\=\>"
-  syn match   pythonNumber	"\<\d\+[jJ]\>"
-  syn match   pythonNumber	"\<\d\+[eE][+-]\=\d\+[jJ]\=\>"
-  syn match   pythonNumber
-	\ "\<\d\+\.\%([eE][+-]\=\d\+\)\=[jJ]\=\%(\W\|$\)\@="
-  syn match   pythonNumber
-	\ "\%(^\|\W\)\zs\d*\.\d\+\%([eE][+-]\=\d\+\)\=[jJ]\=\>"
+  syn match   pythonNumberError	"\<0[xX]\x*[g-zG-Z]\x*\>" display
+  syn match   pythonNumberError	"\<0[oO]\=\o*\D\+\d*\>" display
+  syn match   pythonNumberError	"\<0[bB][01]*\D\+\d*\>" display
+
+  syn match   pythonNumber	"\<0[xX][_0-9a-fA-F]*\x\>" display
+  syn match   pythonNumber	"\<0[oO][_0-7]*\o\>" display
+  syn match   pythonNumber	"\<0[bB][_01]*[01]\>" display
+
+  syn match   pythonNumberError "\<\d[_0-9]*\D\>" display
+  syn match   pythonNumberError "\<0[_0-9]\+\>" display
+  syn match   pythonNumberError	"\<\d[_0-9]*_\>" display
+  syn match   pythonNumber	"\<\d\>" display
+  syn match   pythonNumber	"\<[1-9][_0-9]*\d\>" display
+  syn match   pythonNumber	"\<\d[jJ]\>" display
+  syn match   pythonNumber	"\<[1-9][_0-9]*\d[jJ]\>" display
+
+  syn match   pythonNumberError	"\<0[oO]\=\o*[8-9]\d*\>" display
+  syn match   pythonNumberError	"\<0[bB][01]*[2-9]\d*\>" display
+
+  syn match   pythonNumber	"\.\d\%([_0-9]*\d\)\=\%([eE][+-]\=\d\%([_0-9]*\d\)\=\)\=[jJ]\=\>" display
+  syn match   pythonNumber	"\<\d\%([_0-9]*\d\)\=[eE][+-]\=\d\%([_0-9]*\d\)\=[jJ]\=\>" display
+  syn match   pythonNumber	"\<\d\%([_0-9]*\d\)\=\.\d\%([_0-9]*\d\)\=\%([eE][+-]\=\d\%([_0-9]*\d\)\=\)\=[jJ]\=" display
 endif
 
 " Group the built-ins in the order in the 'Python Library Reference' for
@@ -198,27 +228,27 @@ endif
 if !exists("python_no_builtin_highlight")
   " built-in constants
   " 'False', 'True', and 'None' are also reserved words in Python 3
-  syn keyword pythonBuiltin	False True None
-  syn keyword pythonBuiltin	NotImplemented Ellipsis __debug__
+  syn keyword pythonBuiltinObj	False True None
+  syn keyword pythonBuiltinObj	NotImplemented Ellipsis __debug__
   " built-in functions
-  syn keyword pythonBuiltin	abs all any bin bool bytearray callable chr
-  syn keyword pythonBuiltin	classmethod compile complex delattr dict dir
-  syn keyword pythonBuiltin	divmod enumerate eval filter float format
-  syn keyword pythonBuiltin	frozenset getattr globals hasattr hash
-  syn keyword pythonBuiltin	help hex id input int isinstance
-  syn keyword pythonBuiltin	issubclass iter len list locals map max
-  syn keyword pythonBuiltin	memoryview min next object oct open ord pow
-  syn keyword pythonBuiltin	print property range repr reversed round set
-  syn keyword pythonBuiltin	setattr slice sorted staticmethod str
-  syn keyword pythonBuiltin	sum super tuple type vars zip __import__
+  syn keyword pythonBuiltinFunc	abs all any bin bool bytearray callable chr
+  syn keyword pythonBuiltinFunc	classmethod compile complex delattr dict dir
+  syn keyword pythonBuiltinFunc	divmod enumerate eval filter float format
+  syn keyword pythonBuiltinFunc	frozenset getattr globals hasattr hash
+  syn keyword pythonBuiltinFunc	help hex id input int isinstance
+  syn keyword pythonBuiltinFunc	issubclass iter len list locals map max
+  syn keyword pythonBuiltinFunc	memoryview min next object oct open ord pow
+  syn keyword pythonBuiltinFunc	print property range repr reversed round set
+  syn keyword pythonBuiltinFunc	setattr slice sorted staticmethod str
+  syn keyword pythonBuiltinFunc	sum super tuple type vars zip __import__
   " Python 2 only
-  syn keyword pythonBuiltin	basestring cmp execfile file
-  syn keyword pythonBuiltin	long raw_input reduce reload unichr
-  syn keyword pythonBuiltin	unicode xrange
+  syn keyword pythonBuiltinFunc	basestring cmp execfile file
+  syn keyword pythonBuiltinFunc	long raw_input reduce reload unichr
+  syn keyword pythonBuiltinFunc	unicode xrange
   " Python 3 only
-  syn keyword pythonBuiltin	ascii bytes exec
+  syn keyword pythonBuiltinFunc	ascii bytes exec
   " non-essential built-in functions; Python 2 only
-  syn keyword pythonBuiltin	apply buffer coerce intern
+  syn keyword pythonBuiltinFunc	apply buffer coerce intern
   " avoid highlighting attributes as builtins
   " syn match   pythonAttribute	/\.\h\w*/hs=s+1 contains=ALLBUT,pythonBuiltin transparent
 endif
@@ -315,11 +345,14 @@ if version >= 508 || !exists("did_python_syn_inits")
   HiLink pythonDecorator	Define
   HiLink pythonComment		Comment
   HiLink pythonTodo		Todo
+  HiLink pythonBytes		String
   HiLink pythonString		String
   HiLink pythonRawString	String
+  HiLink pythonFormatString	String
   HiLink pythonQuotes		String
   HiLink pythonTripleQuotes	pythonQuotes
   HiLink pythonEscape		Special
+  HiLink pythonStringFormat	Special
 
   " Classes, Functions
   HiLink pythonClass    Type
@@ -327,9 +360,11 @@ if version >= 508 || !exists("did_python_syn_inits")
 
   if !exists("python_no_number_highlight")
     HiLink pythonNumber		Number
+    HiLink pythonNumberError	Error
   endif
   if !exists("python_no_builtin_highlight")
-    HiLink pythonBuiltin	Function
+    HiLink pythonBuiltinObj	Constant
+    HiLink pythonBuiltinFunc	Function
   endif
   if !exists("python_no_exception_highlight")
     HiLink pythonExceptions	Structure
@@ -344,16 +379,16 @@ if version >= 508 || !exists("did_python_syn_inits")
 
   if exists("python_self_cls_highlight")
     syn keyword pythonSelf self cls
-    HiLink pythonSelf Identifier
+    HiLink pythonSelf		Identifier
   endif
   if !exists("python_no_operator_highlight")
-    HiLink pythonExtraOperator       Operator
-    HiLink pythonExtraPseudoOperator Operator
+    HiLink pythonExtraOperator		Operator
+    HiLink pythonExtraPseudoOperator	Operator
   endif
   if !exists("python_no_parameter_highlight")
-    HiLink pythonParens             Normal
-    HiLink pythonClassParameters    Constant
-    HiLink pythonFunctionParameters Constant
+    HiLink pythonParens			Normal
+    HiLink pythonClassParameters	Constant
+    HiLink pythonFunctionParameters	Constant
   endif
 
   delcommand HiLink
