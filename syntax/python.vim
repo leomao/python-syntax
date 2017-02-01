@@ -317,7 +317,7 @@ if !exists("python_no_doctest_highlight")
   if !exists("python_no_doctest_code_highlight")
     syn region pythonDoctest
 	  \ start="^\s*>>>\s" end="^\s*$"
-	  \ contained contains=ALLBUT,pythonDoctest,@Spell
+	  \ contained contains=ALLBUT,pythonDoctest,@Spell,pythonStringConversion,pythonStringFormatSpec
     syn region pythonDoctestValue
 	  \ start=+^\s*\%(>>>\s\|\.\.\.\s\|"""\|'''\)\@!\S\++ end="$"
 	  \ contained
