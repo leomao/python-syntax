@@ -126,7 +126,7 @@ syn match  pythonFunction "\%(\%(def\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
 syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
 
-syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonNumber,pythonNumberError,pythonString,pythonParens,pythonBrackets,pythonOperator,pythonExtraOperator,pythonBuiltinObj,pythonBuiltinFunc,pythonDot,pythonComma
+syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonNumber,pythonNumberError,pythonString,pythonParens,pythonBrackets,pythonOperator,pythonExtraOperator,pythonBuiltinObj,pythonBuiltinFunc,pythonDot,pythonComma,pythonSelf
 
 " Triple-quoted strings can contain doctests.
 syn region  pythonBytes matchgroup=pythonQuotes
