@@ -126,7 +126,7 @@ syn match  pythonFunction "\%(\%(def\s\|@\)\s*\)\@<=\h\%(\w\|\.\)*" contained
 syn match   pythonComment	"#.*$" contains=pythonTodo,@Spell
 syn keyword pythonTodo		FIXME NOTE NOTES TODO XXX contained
 
-syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonNumber,pythonNumberError,pythonString,pythonParens,pythonBrackets,pythonOperator,pythonExtraOperator,pythonBuiltinObj,pythonBuiltinFunc,pythonDot,pythonComma,pythonSelf
+syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonNumber,pythonNumberError,pythonString,pythonParens,pythonBrackets,pythonOperator,pythonExtraOperator,pythonBuiltinObj,pythonBuiltinFunc,pythonDot,pythonComma,pythonColon,pythonSelf
 
 " Triple-quoted strings can contain doctests.
 syn region  pythonBytes matchgroup=pythonQuotes
@@ -172,13 +172,15 @@ if exists("python_highlight_all")
 endif
 
 syn match pythonStringFormat "{{\|}}" contained containedin=pythonString,pythonRawString,pythonFormatString
-syn match pythonStringFormat "{\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)\=\%(\.\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\[\%(\d\+\|[^!:\}]\+\)\]\)*\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}]\=[<>=^]\)\=[ +-]\=#\=0\=\d*,\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}" contained containedin=pythonString,pythonRawString
+syn match pythonStringFormat "{\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)\=\%(\.\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\[\%(\d\+\|[^!:\}]\+\)\]\)*\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}{]\=[<>=^]\)\=[ +-]\=#\=0\=\d*[_,]\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}" contained containedin=pythonString,pythonRawString
 
-syn region pythonStringReplacementField matchgroup=PythonFormatBraces start="{\@<!{{\@!" end="\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}]\=[<>=^]\)\=[ +-]\=#\=0\=\d*,\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}"hs=s-1,re=e-1 extend contained containedin=pythonFormatString contains=pythonStringReplacementField,pythonStringconversion,pythonStringFormatSpec,@pythonExpression
+syn region pythonStringReplacementField matchgroup=PythonFormatBraces start="{\@<!{{\@!" end="\%(![rsa]\)\=\%(:\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}{]\=[<>=^]\)\=[ +-]\=#\=0\=\d*[_,]\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}"hs=s-1,re=e-1 extend contained containedin=pythonFormatString contains=pythonStringReplacementField,pythonStringconversion,pythonStringFormatSpec,@pythonExpression
+
+syn region pythonStringNestedReplacementField matchgroup=PythonFormatBraces start="{\@<!{{\@!" end="\%(![rsa]\)\=\%(:\%(\%([^}{]\=[<>=^]\)\=[ +-]\=#\=0\=\d*[_,]\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=\)\=}"hs=s-1,re=e-1 extend contained containedin=pythonFormatString contains=pythonStringReplacementField,pythonStringconversion,pythonStringFormatSpec,@pythonExpression
 
 syn match pythonStringConversion "![rsa]" contained containedin=pythonStringReplacementField
 
-syn region pythonStringFormatSpec start=":" end="\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}]\=[<>=^]\)\=[ +-]\=#\=0\=\d*,\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=}\@=" extend contained containedin=pythonStringReplacementField contains=pythonStringReplacementField
+syn match pythonStringFormatSpec ":\%({\%(\%([^[:cntrl:][:space:][:punct:][:digit:]]\|_\)\%([^[:cntrl:][:punct:][:space:]]\|_\)*\|\d\+\)}\|\%([^}{]\=[<>=^]\)\=[ +-]\=#\=0\=\d*[_,]\=\%(\.\d\+\)\=[bcdeEfFgGnosxX%]\=\)\=}\@=" extend contained containedin=pythonStringReplacementField contains=pythonStringNestedReplacementField
 
 " It is very important to understand all details before changing the
 " regular expressions below or their order.
