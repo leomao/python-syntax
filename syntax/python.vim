@@ -218,7 +218,7 @@ if !exists("python_no_number_highlight")
 
   syn match   pythonNumber	"\.\d\%([_0-9]*\d\)\=\%([eE][+-]\=\d\%([_0-9]*\d\)\=\)\=[jJ]\=\>" display
   syn match   pythonNumber	"\<\d\%([_0-9]*\d\)\=[eE][+-]\=\d\%([_0-9]*\d\)\=[jJ]\=\>" display
-  syn match   pythonNumber	"\<\d\%([_0-9]*\d\)\=\.\d\%([_0-9]*\d\)\=\%([eE][+-]\=\d\%([_0-9]*\d\)\=\)\=[jJ]\=" display
+  syn match   pythonNumber	"\<\d\%([_0-9]*\d\)\=\.\%(\d[_0-9]*\d\)\=\%([eE][+-]\=\d\%([_0-9]*\d\)\=\)\=[jJ]\=" display
 endif
 
 " Group the built-ins in the order in the 'Python Library Reference' for
@@ -391,11 +391,6 @@ if version >= 508 || !exists("did_python_syn_inits")
   if !exists("python_no_operator_highlight")
     HiLink pythonExtraOperator		Operator
     HiLink pythonExtraPseudoOperator	Operator
-  endif
-  if !exists("python_no_parameter_highlight")
-    HiLink pythonParens			Normal
-    HiLink pythonClassParameters	Constant
-    HiLink pythonFunctionParameters	Constant
   endif
 
   delcommand HiLink
